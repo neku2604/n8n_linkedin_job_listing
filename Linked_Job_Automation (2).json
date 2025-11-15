@@ -1,0 +1,504 @@
+{
+  "name": "Linked_Job_Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://rss.app/feeds/ZUh4GAJCwdhZvi5F.xml",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        -976,
+        608
+      ],
+      "id": "92cb5750-04f0-414d-85bc-99be978bb015",
+      "name": "RSS Read"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.link }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -544,
+        608
+      ],
+      "id": "663c203a-67f6-4728-83a9-f81e95c3525e",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You're an intelligent bot capable of pulling out data from a job listing site.",
+              "role": "system"
+            },
+            {
+              "content": "=Here's the job site:\n {{ $json.data }}"
+            },
+            {
+              "content": "Please output the data in JSON format, using the following structure:\n\n{\n\"company_name\": \"\",\n\"benefits\": \"\", //401K plan, medical, etc, please separate by commas\n\"job_description\": \"\", //please make it 200 characters or less\n\"location\": \"\"\n}",
+              "role": "assistant"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -320,
+        608
+      ],
+      "id": "7f5bc6a1-2998-4509-9465-2821799455cf",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "67Pi1dR30MJhjbql",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "maxItems": 5
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -768,
+        608
+      ],
+      "id": "70e8ea22-ab80-4096-9c16-694803e872f4",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "url": "https://rss.app/feeds/oPUTSmsbTllxvHIM.xml",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        688,
+        0
+      ],
+      "id": "f4eb7cfe-be0f-4814-bc28-5ed8c5b6cf8b",
+      "name": "RSS Read1"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "7ac18300-7b93-40e9-99ef-c84465f8be50",
+      "name": "Schedule Trigger1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "993ff775-0e35-4844-8b30-6d19f605cbfa",
+              "name": "RSS feeds",
+              "value": "[\"https://rss.app/feeds/eLi2CzXTaHeeHkNE.xml\", \"https://rss.app/feeds/eLi2CzXTaHeeHkNE.xml\"]",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        0
+      ],
+      "id": "b3f3246d-0a29-4802-b35e-8048d6505821",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "['RSS feeds']",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        448,
+        0
+      ],
+      "id": "9163ebc9-cc25-41ae-9109-2334b1079d3c",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1168,
+        608
+      ],
+      "id": "1f0ff0b6-4b39-46fb-a1ec-7948f2ef5af9",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1XneNMfL0tW3G1vjV05les71_2nBbCeaRU2OUVkVZBqg",
+          "mode": "list",
+          "cachedResultName": "Untitled spreadsheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XneNMfL0tW3G1vjV05les71_2nBbCeaRU2OUVkVZBqg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XneNMfL0tW3G1vjV05les71_2nBbCeaRU2OUVkVZBqg/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Cover Letter": "={{ $json.choices[0].message.content.cover_letter }}",
+            "Company Name": "={{ $('Message a model').item.json.message.content.job_listing.company }}",
+            "Job Description": "={{ $('OpenAI').item.json.message.content.job_description }}",
+            "Benefits": "={{ $('OpenAI').item.json.message.content.benefits }}",
+            "Link": "={{ $('Limit').item.json.link }}",
+            "Date": "={{ $('RSS Read').item.json.isoDate }}",
+            "Title": "={{ $('Limit').item.json.title }}"
+          },
+          "matchingColumns": [
+            "Link"
+          ],
+          "schema": [
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Job Description",
+              "displayName": "Job Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Link",
+              "displayName": "Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Rating",
+              "displayName": "Rating",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company Name",
+              "displayName": "Company Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Benefits",
+              "displayName": "Benefits",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Job Description",
+              "displayName": "Job Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Cover Letter",
+              "displayName": "Cover Letter",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        832,
+        608
+      ],
+      "id": "211ca823-2b4d-4c53-a301-6edaff4cdbb6",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "idjLTW4k3k0c4nyt",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You're an intelligent bot rating how closely a job listing is to a candidates skill set, on a score of 5.\nGive the following points:\na) 3 points for skills matching, 1 point for mostly matching\nb) 1 point for it being the right experience level\nc) 1 point for it being a remote position\nd) 1 point if past job experience matches the job role\ne) 1 point if the skills on the resume align with the job\nf) 3 points if I meet the job qualifications posted based on my resume",
+              "role": "system"
+            },
+            {
+              "content": "=Here's the job listing details:\n{{ $json.message.content.company_name }}\n{{ $json.message.content.job_description }}\n\nSample resume profile- \n\"\"\"\nHere's a detailed summary of your CV and the skills you've highlighted throughout your experience:\n\n---\n\n### **Profile Overview**\n\nYou are an enthusiastic Software Developer with strong foundations in Java, Spring Boot, Full-Stack Development, and hands-on experience in building real-world applications. With a degree in Information Science and Engineering, complemented by rigorous training at JSpiders, you bring a solid understanding of backend systems, web development, and database management.\n\nYou have worked on multiple full-stack projects, demonstrating your ability to design, build, and deploy applications that enhance user experience and streamline operations. You combine strong problem-solving skills with industry-relevant technical expertise, and you are continuously expanding your capabilities by learning modern development tools and AI-assisted coding practices.\n\nCore Competencies\nBackend Development\n\nStrong command over Core Java and Advanced Java concepts\n\nSkilled in Spring, Spring Boot, Hibernate, JDBC, and RESTful APIs\n\nExperience building scalable backend architectures using Java frameworks\n\nFrontend Development\n\nProficient in HTML5, CSS3, JavaScript, and ReactJS\n\nSkilled in building responsive UI using Flexbox and CSS Grid\n\nAbility to convert designs into clean, modern, user-friendly web pages\n\nDatabase & Data Handling\n\nExperience working with MySQL, Oracle, and PL/SQL\n\nPractical exposure to relational database design, optimization, and CRUD operations\n\nIntegration of backend services with real-time database updates\n\nSoftware Engineering Practices\n\nVersion control using Git and GitHub\n\nFamiliarity with SDLC, debugging, and problem-solving in real-time scenarios\n\nAbility to collaborate effectively in project teams\n\nAI Tools & Productivity\n\nHands-on exposure to GPT-4o for learning, coding, and prompt engineering\n\nUse of GitHub Copilot to improve code quality and accelerate development\n\nKey Projects\nHotel Management System (HTML, CSS, MySQL)\n\nBuilt a fully functional web-based hotel management system\n\nFeatures include room booking, billing, customer check-in/check-out, and real-time availability tracking\n\nAutomated manual workflows, improving accuracy and operational efficiency\n\nBMW Website Clone (HTML, CSS)\n\nCreated a pixel-perfect clone of BMW’s official landing page\n\nUsed responsive layout techniques with Flexbox and CSS Grid\n\nStrengthened UI/UX capabilities through design replication\n\nPlay The Guess Game (Java, Hibernate, JDBC)\n\nDeveloped a console-based interactive game with user registration and wallet deposit\n\nImplemented a 3-round prediction system with rewards/penalties\n\nUsed Hibernate + JDBC to persist user data and game results\n\nTechnical Skills\n\nLanguages: Java (Core & Advanced), JavaScript\n\nBackend Frameworks: Spring, Spring Boot, Hibernate, JDBC\n\nFrontend: HTML5, CSS3, JavaScript, ReactJS\n\nDatabases: MySQL, Oracle, PL/SQL\n\nTools: Git, GitHub, VS Code, Eclipse, Visual Studio\n\nAI Tools: ChatGPT, GitHub Copilot\n\nTraining & Internships\n\nCompleted an intensive 6-month Advanced Java Training at JSpiders, Rajajinagar\n\nHands-on exposure to Spring, Spring Boot, Hibernate, JDBC, and web technologies\n\nIoT Internship at Emertxe Information Technologies\n\nEducation\n\nB.Tech in Information Science and Engineering\nCMR Institute of Technology, Bengaluru (2024)\n\n12th, PCM\nBokaro Public School, Jharkhand\n\nProfessional Strengths\n\nStrong foundation in backend development and Java frameworks\n\nAbility to build clean, responsive, and modern user interfaces\n\nGood understanding of relational databases and API integration\n\nQuick learner with a passion for exploring new tools and technologies\n\nEffective communicator with the ability to explain technical concepts clearly\n\nContinuously improving coding efficiency using AI tools and modern best practices\n"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        64,
+        608
+      ],
+      "id": "204e1440-8e70-41ca-92c7-5ee123ad9760",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "67Pi1dR30MJhjbql",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You're an intelligent bot perfect at creating cover letters for a job. Please take the candidates resume and create a customized cover letter to the job.",
+              "role": "system"
+            },
+            {
+              "content": "=Here's the job listing details:\nTitle: {{ $('RSS Read').item.json.title }}\nDescription: {{ $('OpenAI').item.json.message.content.job_description }}\nName: {{ $('OpenAI').item.json.message.content.company_name }}\nLocation: {{ $('OpenAI').item.json.message.content.location }}\n\nHere is the candidates skill set:\n\nHere's a detailed summary of your CV and the skills you've highlighted throughout your experience:\n\n---\n\n### **Profile Overview**\n\nNeha Kuamri, is an enthusiastic Software Developer with strong foundations in Java, Spring Boot, Full-Stack Development, and hands-on experience in building real-world applications. With a degree in Information Science and Engineering, complemented by rigorous training at JSpiders, you bring a solid understanding of backend systems, web development, and database management.\n\nYou have worked on multiple full-stack projects, demonstrating your ability to design, build, and deploy applications that enhance user experience and streamline operations. You combine strong problem-solving skills with industry-relevant technical expertise, and you are continuously expanding your capabilities by learning modern development tools and AI-assisted coding practices.\n\nCore Competencies\nBackend Development\n\nStrong command over Core Java and Advanced Java concepts\n\nSkilled in Spring, Spring Boot, Hibernate, JDBC, and RESTful APIs\n\nExperience building scalable backend architectures using Java frameworks\n\nFrontend Development\n\nProficient in HTML5, CSS3, JavaScript, and ReactJS\n\nSkilled in building responsive UI using Flexbox and CSS Grid\n\nAbility to convert designs into clean, modern, user-friendly web pages\n\nDatabase & Data Handling\n\nExperience working with MySQL, Oracle, and PL/SQL\n\nPractical exposure to relational database design, optimization, and CRUD operations\n\nIntegration of backend services with real-time database updates\n\nSoftware Engineering Practices\n\nVersion control using Git and GitHub\n\nFamiliarity with SDLC, debugging, and problem-solving in real-time scenarios\n\nAbility to collaborate effectively in project teams\n\nAI Tools & Productivity\n\nHands-on exposure to GPT-4o for learning, coding, and prompt engineering\n\nUse of GitHub Copilot to improve code quality and accelerate development\n\nKey Projects\nHotel Management System (HTML, CSS, MySQL)\n\nBuilt a fully functional web-based hotel management system\n\nFeatures include room booking, billing, customer check-in/check-out, and real-time availability tracking\n\nAutomated manual workflows, improving accuracy and operational efficiency\n\nBMW Website Clone (HTML, CSS)\n\nCreated a pixel-perfect clone of BMW’s official landing page\n\nUsed responsive layout techniques with Flexbox and CSS Grid\n\nStrengthened UI/UX capabilities through design replication\n\nPlay The Guess Game (Java, Hibernate, JDBC)\n\nDeveloped a console-based interactive game with user registration and wallet deposit\n\nImplemented a 3-round prediction system with rewards/penalties\n\nUsed Hibernate + JDBC to persist user data and game results\n\nTechnical Skills\n\nLanguages: Java (Core & Advanced), JavaScript\n\nBackend Frameworks: Spring, Spring Boot, Hibernate, JDBC\n\nFrontend: HTML5, CSS3, JavaScript, ReactJS\n\nDatabases: MySQL, Oracle, PL/SQL\n\nTools: Git, GitHub, VS Code, Eclipse, Visual Studio\n\nAI Tools: ChatGPT, GitHub Copilot\n\nTraining & Internships\n\nCompleted an intensive 6-month Advanced Java Training at JSpiders, Rajajinagar\n\nHands-on exposure to Spring, Spring Boot, Hibernate, JDBC, and web technologies\n\nIoT Internship at Emertxe Information Technologies\n\nEducation\n\nB.Tech in Information Science and Engineering\nCMR Institute of Technology, Bengaluru (2024)\n\n12th, PCM\nBokaro Public School, Jharkhand\n\nProfessional Strengths\n\nStrong foundation in backend development and Java frameworks\n\nAbility to build clean, responsive, and modern user interfaces\n\nGood understanding of relational databases and API integration\n\nQuick learner with a passion for exploring new tools and technologies\n\nEffective communicator with the ability to explain technical concepts clearly\n\nContinuously improving coding efficiency using AI tools and modern best practices"
+            },
+            {
+              "content": "Please return JSON data structured the following way:\n{\n\"cover_letter\": \"\"\n}",
+              "role": "assistant"
+            }
+          ]
+        },
+        "simplify": false,
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        448,
+        608
+      ],
+      "id": "c6d686ef-cc5e-460a-a340-d48f33f6c81c",
+      "name": "Message a model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "67Pi1dR30MJhjbql",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "RSS Read": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "RSS Read1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "RSS Read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Message a model1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model1": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f5b9f291-709c-42d7-bbed-918afcbcebc5",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "16c08e5262b545641ce50bd1cb2b2959e6e14514b688a7763df0a205324b1451"
+  },
+  "id": "uYNNtFK27SUCLzuc",
+  "tags": []
+}
