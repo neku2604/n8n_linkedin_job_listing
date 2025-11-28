@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="n8n_LinedIn_job_listing.png" alt="Neha Kumari - AI & LLM Enthusiast" width="100%" />
+</p>
+
 # n8n LinkedIn Job Automation
 
 An automated n8n workflow that fetches LinkedIn (or other) job listings via RSS, processes them with OpenAI, and logs structured data to Google Sheets for tracking and analysis.
